@@ -1,10 +1,13 @@
 # Battery Cycle Data Visualizer
 Small program that helps develop battery cycle visualizations with minimal input from user. 
 
-## Machine requirements
+## Machine/file requirements
 In order to run this program, you should have these installed into your computer
 - Python/Anaconda/Jupyter
   - Installing [Anaconda](https://www.anaconda.com/download) should also install Python and Jupyter onto your computer
+- Battery cycle file in .csv format
+  - Please make sure column headers are in proper area before using
+  - You can convert your .xls files with online .csv converters; can also do "Save As" on Excel and choose .csv
  
 ## Running the program
 Follow these instructions in using the program:
