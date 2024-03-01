@@ -4,6 +4,10 @@ import matplotlib.pyplot as plt
 import random
 import streamlit as st
 
+# Config for page
+menu_items_page = {"Report a bug":"mailto:alexavndrarh@gmail.com","About":"This is version **1.0**"}
+st.set_page_config(page_title="Battery Cycle Data Visualizer", page_icon="🔋",menu_items=menu_items_page)
+
 # Random header stuff
 st.title("Battery cycle data generator")
 st.write("""
