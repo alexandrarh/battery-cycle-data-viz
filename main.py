@@ -79,6 +79,9 @@ def plotting_battery_cycle(charge, discharge, min_val, max_val, cycle_legend, co
 
     return battery_cycle_viz
 
+def convert_df(df):
+    return df.to_csv().encode('utf-8')
+
 # Plot generation here
 if generate_button and battery_file:
     # Setup pre-plot
@@ -104,3 +107,4 @@ if generate_button and battery_file:
 
     battery_cycle_viz = plotting_battery_cycle(charge, discharge, min_val, max_val, cycle_legend, color_range, plot_title)
     st.pyplot(battery_cycle_viz)
+    st.download_button(label="Download generated cycle data",data=convert_df(battery_df),file_name="generated-battery-df.csv")
