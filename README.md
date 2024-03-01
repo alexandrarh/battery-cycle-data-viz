@@ -1,21 +1,21 @@
 # Battery Cycle Data Visualizer
-Small program that helps develop battery cycle visualizations with minimal input from user. 
+Web app that helps create visualizations of battery cycles easily.
 
-## Machine/file requirements
-In order to run this program, you should have these installed into your computer
-- Python/Anaconda/Jupyter
-  - Installing [Anaconda](https://www.anaconda.com/download) should also install Python and Jupyter onto your computer
-- Battery cycle file in .csv format
-  - Please make sure column headers are in proper area before using
-  - You can convert your .xls files with online .csv converters; can also do "Save As" on Excel and choose .csv
+## User requirements
+In order to use this website, you should have these requirements fulfilled!
+- Neware .csv file
+  - Can be converted using Excel or any online file converter
  
-## Running the program
-Follow these instructions in using the program:
-1. Download this repo as a .zip file (and unzip the file in desired location)
-2. Use your terminal and open `jupyter notebook` (using either respecitve IDE or Terminal) in your respective location
-3. Fill in the `battery_df_location` variable in the "Open dataset and semi-cleaning" section with the absolute path of your battery cycle file (runs only on .CSV files, convert before using)
-4. Run cells below
+## What's in the Battery Cycle Data Visualizer?
+In the Battery Cycle Data Visualizer, it simplifies the process of creating battery cycle data visualizations using Python, Matplotlib, Pandas, and NumPy. All the user is required to provide is their .csv file (see the `User requirements` above), and any other configurations are <u>not</u> required, however they allow for further customization of the visualization. These customizations include:
+- Plot title name
+- What cycles to visualize
 
-## References/Creation
-Made by Alexandra Hernandez </br>
-[Website](https://alexavndra.github.io) - [LinkedIn](https://linkedin.com/in/alexavndrarh) - [Email](mailto:arh003@ucsd.edu)
+Create your visualizations easily with the Battery Cycle Data Visualizer today!
+
+## App credits
+This web app was made by Alexandra Hernandez. If you have any questions/concerns, feel free to reach me at [alexavndrarh@gmail.com](mailto:alexavndrarh@gmail.com). </br>
+
+### Other places to find me at
+[Website](https://alexavndra.github.io) </br> 
+[LinkedIn](https://linkedin.com/in/alexavndrarh)
