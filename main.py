@@ -7,15 +7,16 @@ import streamlit as st
 # Random header stuff
 st.title("Battery cycle data generator")
 st.write("""
-Welcome to the Battery cycle data generator web app!Generate your battery cycles easily here.
+Welcome to the Battery cycle data generator web app! Generate your battery cycles easily here.
 
 Created by [Alexandra Hernandez](https://alexavndra.github.io) at UC San Diego.
 """)
 st.subheader("How to use the app")
 st.write("""
 1. Upload battery cycle file by clicking the **Upload** button
-2. [Insert other here]
-3. Let the magic happen!
+2. Customize the configurations below (if you'd like)
+3. Click the **Generate Visualization** button
+4. Let the magic happen!
 """
 )
 st.subheader("Requirements from you")
