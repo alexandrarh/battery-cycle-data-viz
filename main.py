@@ -3,7 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random
 import streamlit as st
-from pathlib import Path
 
 # Config for page
 menu_items_page = {"Report a bug":"mailto:alexavndrarh@gmail.com","About":"This is version **1.0**"}
