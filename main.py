@@ -9,7 +9,7 @@ menu_items_page = {"Report a bug":"mailto:alexavndrarh@gmail.com","About":"This 
 st.set_page_config(page_title="Battery Cycle Data Visualizer", page_icon="🔋",menu_items=menu_items_page)
 
 # Random header stuff
-st.title("Battery cycle data generator")
+st.title("Battery cycle visualizer")
 st.write("""
 Welcome to the Battery cycle data generator web app! Generate your battery cycles easily here.
 
@@ -45,12 +45,13 @@ plot_title = st.text_input(label="Type plot title here", placeholder="Example: B
 battery_df_file_name_input = st.text_input(label="Type what to name visualization here", placeholder="Example: battery-cycles", value="battery-viz")
 battery_df_file_name = battery_df_file_name_input + ".png"
 
+length = st.slider("Adjust the length of your visualization", 0, 50, 15)
+width = st.slider("Adjust the width of your visualization", 0, 50, 10)
+
 generate_button = st.button(label="Generate visualization", type="primary")
 
-'''
-
-'''
-# Functions to reduce clutter
+# Functions to help generate the visualization + creating the specific battery cycle range .csv
+# Drops unwanted cycles (based on what theuser wants to generate)
 def drop_unwanted_cycles(battery_df, cycles_to_generate):
     if cycles_to_generate:
         cycles_str_vals = cycles_to_generate.split(",")
@@ -58,8 +59,9 @@ def drop_unwanted_cycles(battery_df, cycles_to_generate):
         return battery_df[battery_df["Cycle ID"].isin(cycles)]
     return battery_df
 
+# Plots battery cycle onto a line graph
 def plotting_battery_cycle(charge, discharge, min_val, max_val, cycle_legend, color_range, plot_title):
-    battery_cycle_viz = plt.figure(figsize=(15, 10), facecolor="white")
+    battery_cycle_viz = plt.figure(figsize=(length, width), facecolor="white")
     i = 0
 
     for cycle_id, group in charge.groupby('Cycle ID'):
@@ -81,9 +83,11 @@ def plotting_battery_cycle(charge, discharge, min_val, max_val, cycle_legend, co
 
     return battery_cycle_viz
 
+# Converts the battery_df into a .csv (important for when the user wants to pull a file only containing their cycles)
 def convert_df(df):
     return df.to_csv().encode('utf-8')
 
+# Standardizes the dataframe to have these column names (just needs to have the same amount of columns)
 def standardize_df(battery_df):
     battery_df.columns = [
         "Data serial number", "Cycle ID", "Step ID", "Step number", "Step Type", "Time(hh:mm:ss)", "Total time(hh:mm:ss)",
@@ -101,7 +105,7 @@ def standardize_df(battery_df):
             battery_df[column] = battery_df[column].astype(float)
     return battery_df
         
-# Plot generation here
+# Overall app run here
 if generate_button and battery_file:
     # Setup pre-plot
     # Create if-statement to evaluate what the file is (excel or csv)
@@ -134,7 +138,5 @@ if generate_button and battery_file:
     max_val = battery_df["Voltage(V)"].max()
 
     battery_cycle_viz = plotting_battery_cycle(charge, discharge, min_val, max_val, cycle_legend, color_range, plot_title)
-    # img = plt.savefig(battery_df_file_name)
     st.pyplot(battery_cycle_viz)
     st.download_button(label="Download generated cycle data", data=convert_df(battery_df), file_name="generated-battery-df.csv")
-    # st.download_button(label="Download generated visualization", data=img,file_name=battery_df_file_name)
