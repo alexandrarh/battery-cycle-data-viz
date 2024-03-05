@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-import NewareNDA as nws
 import streamlit as st
 
 # Config for page
