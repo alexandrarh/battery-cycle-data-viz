@@ -61,7 +61,7 @@ def drop_unwanted_cycles(battery_df, cycles_to_generate):
 
 # Plots battery cycle onto a line graph
 def plotting_battery_cycle(charge, discharge, min_val, max_val, cycle_legend, color_range, plot_title):
-    battery_cycle_viz = plt.figure(figsize=(length, width), facecolor="white")
+    battery_cycle_viz = plt.figure(figsize=(width,length), facecolor="white")
     i = 0
 
     for cycle_id, group in charge.groupby('Cycle ID'):
