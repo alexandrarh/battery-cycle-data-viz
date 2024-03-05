@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+import NewareNDA as nws
 import streamlit as st
 
 # Config for page
@@ -61,7 +62,7 @@ def drop_unwanted_cycles(battery_df, cycles_to_generate):
 
 # Plots battery cycle onto a line graph
 def plotting_battery_cycle(charge, discharge, min_val, max_val, cycle_legend, color_range, plot_title):
-    battery_cycle_viz = plt.figure(figsize=(width,length), facecolor="white")
+    battery_cycle_viz = plt.figure(figsize=(length,width), facecolor="white")
     i = 0
 
     for cycle_id, group in charge.groupby('Cycle ID'):
@@ -104,6 +105,7 @@ def standardize_df(battery_df):
         elif column == "Voltage(V)" or column == "Current(mA)" or column == "Specific Capacity(mAh/g)":
             battery_df[column] = battery_df[column].astype(float)
     return battery_df
+
         
 # Overall app run here
 if generate_button and battery_file:
