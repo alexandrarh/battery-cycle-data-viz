@@ -2,7 +2,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import random
-import NewareNDA as nws
 import streamlit as st
 
 # Config for page
@@ -13,6 +12,7 @@ st.set_page_config(page_title="Battery Cycle Data Visualizer", page_icon="🔋",
 st.title("Battery cycle visualizer")
 st.write("""
 Welcome to the Battery cycle data generator web app! Generate your battery cycles easily here.
+**Compatible with Neware and Arbin-generated data files!**
 
 Created by [Alexandra Hernandez](https://alexavndra.github.io) at UC San Diego.
 """)
@@ -27,8 +27,6 @@ st.write("""
 st.subheader("Requirements from you")
 st.write("""
 - The file you give is either a .csv, .xls, or .xlsx file
-
-**NOTE**: Only works for battery data generated from Neware (as of right now)!
 """
 )
 
@@ -60,8 +58,8 @@ def drop_unwanted_cycles(battery_df, cycles_to_generate):
         return battery_df[battery_df["Cycle ID"].isin(cycles)]
     return battery_df
 
-# Plots battery cycle onto a line graph
-def plotting_battery_cycle(charge, discharge, min_val, max_val, cycle_legend, color_range, plot_title):
+# Plots NDA battery cycle onto a line graph
+def plotting_battery_cycle_nda(charge, discharge, min_val, max_val, cycle_legend, color_range, plot_title):
     battery_cycle_viz = plt.figure(figsize=(length,width), facecolor="white")
     i = 0
 
@@ -77,6 +75,30 @@ def plotting_battery_cycle(charge, discharge, min_val, max_val, cycle_legend, co
 
     plt.title(plot_title)
     plt.xlabel("Specific Capacity(mAh/g)")
+    plt.ylabel("Voltage(V)") 
+    plt.ylim(min_val, max_val)
+    plt.legend(cycle_legend,loc="lower right")
+    plt.grid(visible=True)
+
+    return battery_cycle_viz
+
+# Plots Arbin battery cycle onto a line graph
+def plotting_battery_cycle_arbin(charge, discharge, min_val, max_val, cycle_legend, color_range, plot_title):
+    battery_cycle_viz = plt.figure(figsize=(length,width), facecolor="white")
+    i = 0
+
+    for cycle_id, group in charge.groupby('Cycle ID'):
+        plt.plot(group['Charge_Capacity(Ah)'], group['Voltage(V)'], color = color_range[i], linewidth="1.5")
+        i += 1
+    
+    i = 0
+
+    for cycle_id, group in discharge.groupby('Cycle ID'):
+        plt.plot(group['Discharge_Capacity(Ah)'], group['Voltage(V)'], color = color_range[i], linewidth="1.5")
+        i += 1
+
+    plt.title(plot_title)
+    plt.xlabel("Specific Capacity(Ah)")
     plt.ylabel("Voltage(V)") 
     plt.ylim(min_val, max_val)
     plt.legend(cycle_legend,loc="lower right")
@@ -106,7 +128,12 @@ def standardize_df(battery_df):
             battery_df[column] = battery_df[column].astype(float)
     return battery_df
 
-        
+# Standardizes Arbin dataframe
+def standardize_arbin(battery_df):
+    battery_df.rename(columns={"Cycle_Index": "Cycle ID"}, inplace=True)
+    battery_df["Specific Capacity(Ah)"] = battery_df["Charge_Capacity(Ah)"] + battery_df["Discharge_Capacity(Ah)"]
+    return battery_df
+
 # Overall app run here
 if generate_button and battery_file:
     # Setup pre-plot
@@ -115,11 +142,19 @@ if generate_button and battery_file:
     if battery_file.name.endswith(".csv"):
         battery_df = pd.read_csv(battery_file)
     elif battery_file.name.endswith(".xls") or battery_file.name.endswith(".xlsx"):
-        battery_df = pd.read_excel(battery_file,sheet_name="Record")
+        battery_reader_file = pd.ExcelFile(battery_file)
+        for sheet in battery_reader_file.sheet_names:
+            if sheet == "Record":
+                battery_df = pd.read_excel(battery_file, sheet_name="Record") # NDA
+            elif "Channel" in sheet:
+                battery_df = pd.read_excel(battery_file, sheet_name=sheet)  # Arbin
 
     # When you need to standardize the columns
     if battery_df.columns.values[0] != "Data serial number":
-        battery_df = standardize_df(battery_df)
+        if battery_df.columns.values[0] == "Data_Point":
+            battery_df = standardize_arbin(battery_df)
+        else:
+            battery_df = standardize_df(battery_df)
     
     # When there are args in cycles_to_generate 
     battery_df = drop_unwanted_cycles(battery_df, cycles_to_generate)
@@ -133,12 +168,19 @@ if generate_button and battery_file:
     for i in range(len(cycle_numbers)):
         cycle_legend.append("Cycle " + str(cycle_numbers[i]))
 
-    # Plotting 
-    charge = battery_df[battery_df["Current(mA)"] >= 0]
-    discharge = battery_df[battery_df["Current(mA)"] < 0]
-    min_val = battery_df["Voltage(V)"].min()
-    max_val = battery_df["Voltage(V)"].max()
+    # Plotting (First is NDA, second is Arbin)
+    if 'Specific Capacity(mAh/g)' in battery_df.columns:
+        charge = battery_df[battery_df["Current(mA)"] >= 0]
+        discharge = battery_df[battery_df["Current(mA)"] < 0]
+        min_val = battery_df["Voltage(V)"].min()
+        max_val = battery_df["Voltage(V)"].max()
+        battery_cycle_viz = plotting_battery_cycle_nda(charge, discharge, min_val, max_val, cycle_legend, color_range, plot_title)
+    elif 'Specific Capacity(Ah)' in battery_df.columns:
+        charge = battery_df[battery_df["Current(A)"] >= 0]
+        discharge = battery_df[battery_df["Current(A)"] < 0]
+        min_val = battery_df["Voltage(V)"].min()
+        max_val = battery_df["Voltage(V)"].max()
+        battery_cycle_viz = plotting_battery_cycle_arbin(charge, discharge, min_val, max_val, cycle_legend, color_range, plot_title)
 
-    battery_cycle_viz = plotting_battery_cycle(charge, discharge, min_val, max_val, cycle_legend, color_range, plot_title)
     st.pyplot(battery_cycle_viz)
     st.download_button(label="Download generated cycle data", data=convert_df(battery_df), file_name="generated-battery-df.csv")
