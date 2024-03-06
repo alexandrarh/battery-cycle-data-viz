@@ -27,6 +27,7 @@ st.write("""
 st.subheader("Requirements from you")
 st.write("""
 - The file you give is either a .csv, .xls, or .xlsx file
+    - Please make sure that if your file is a **Neware** file, there are 23 columns; do not alter column order and/or amount before using
 """
 )
 
