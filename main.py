@@ -113,26 +113,38 @@ def convert_df(df):
 
 # Standardizes the dataframe to have these column names (just needs to have the same amount of columns)
 def standardize_df(battery_df):
-    battery_df.columns = [
-        "Data serial number", "Cycle ID", "Step ID", "Step number", "Step Type", "Time(hh:mm:ss)", "Total time(hh:mm:ss)",
-        "Current(mA)", "Voltage(V)", "Capacity(mAh)", "Specific Capacity(mAh/g)", "Charge Cap.(mAh)", "Charging capacity(mAh/g)",
-        "DChg cap.(mAh)", "Discharge specific capacity(mAh/g)", "Energy(Wh)", "Specific energy(mWh/g)", "Chg Eng.(Wh)",
-        "Charge ratio energy(mWh/g)", "Discharge energy(Wh)",
-        "Discharge specific energy(mWh/g)", "Real time","Power(W)"
-        ]
+    cycle_id = "Cycle ID"
+    voltage = "Voltage(V)"
+    current_name = "Current(mA)"
+    specific_capacity = "Specific Capacity(mAh/g)"
+    
+    cycle_id_loc = battery_df.columns[battery_df.isin([cycle_id]).any(axis=0)][0]
+    voltage_loc = battery_df.columns[battery_df.isin([voltage]).any(axis=0)][0]
+    current_loc = battery_df.columns[battery_df.isin([current_name]).any(axis=0)][0]
+    specific_capacity_loc = battery_df.columns[battery_df.isin([specific_capacity]).any(axis=0)][0]
+    
+    rename_locs = {cycle_id_loc:cycle_id, voltage_loc:voltage, current_loc:current_name,
+                specific_capacity_loc:specific_capacity}
+    
+    battery_df.rename(columns=rename_locs,inplace=True)
     battery_df = battery_df.iloc[1:]
     battery_df.reindex()
-    for column in battery_df.columns.to_list():
-        if column == "Cycle ID":
-            battery_df[column] = battery_df[column].astype(int)
-        elif column == "Voltage(V)" or column == "Current(mA)" or column == "Specific Capacity(mAh/g)":
-            battery_df[column] = battery_df[column].astype(float)
+    
+    battery_df[cycle_id] = battery_df[cycle_id].astype(int)
+    battery_df[voltage] = battery_df[voltage].astype(float)
+    battery_df[current_name] = battery_df[current_name].astype(float)
+    battery_df[specific_capacity] = battery_df[specific_capacity].astype(float)
+    
     return battery_df
 
 # Standardizes Arbin dataframe
 def standardize_arbin(battery_df):
-    battery_df.rename(columns={"Cycle_Index": "Cycle ID"}, inplace=True)
-    battery_df["Specific Capacity(Ah)"] = battery_df["Charge_Capacity(Ah)"] + battery_df["Discharge_Capacity(Ah)"]
+    if battery_df.columns.values[0] == "Data_Point":
+        battery_df.rename(columns={"Cycle_Index": "Cycle ID"}, inplace=True)
+        battery_df["Specific Capacity(Ah)"] = battery_df["Charge_Capacity(Ah)"] + battery_df["Discharge_Capacity(Ah)"]
+    elif battery_df.columns.values[0] == "DataPoint":
+        battery_df.rename(columns={"Cycle Index": "Cycle ID", "Chg. Cap.(Ah)":"Charge_Capacity(Ah)", "DChg. Cap.(Ah)":"Discharge_Capacity(Ah)"}, inplace=True)
+    
     return battery_df
 
 # Overall app run here
@@ -142,7 +154,7 @@ if generate_button and battery_file:
     # If .xls, then run a function that converts it and standardizes it
     if battery_file.name.endswith(".csv"):
         battery_df = pd.read_csv(battery_file)
-    elif battery_file.name.endswith(".xls") or battery_file.name.endswith(".xlsx"):
+    elif battery_file.name.endswith(".xls") or battery_file.name.endswith(".xlsx"): # This might be bugged
         battery_reader_file = pd.ExcelFile(battery_file)
         for sheet in battery_reader_file.sheet_names:
             if sheet == "Record":
@@ -152,7 +164,7 @@ if generate_button and battery_file:
 
     # When you need to standardize the columns
     if battery_df.columns.values[0] != "Data serial number":
-        if battery_df.columns.values[0] == "Data_Point":
+        if battery_df.columns.values[0] == "Data_Point" or battery_df.columns.values[0] == "DataPoint":
             battery_df = standardize_arbin(battery_df)
         else:
             battery_df = standardize_df(battery_df)
@@ -176,7 +188,7 @@ if generate_button and battery_file:
         min_val = battery_df["Voltage(V)"].min()
         max_val = battery_df["Voltage(V)"].max()
         battery_cycle_viz = plotting_battery_cycle_nda(charge, discharge, min_val, max_val, cycle_legend, color_range, plot_title)
-    elif 'Specific Capacity(Ah)' in battery_df.columns:
+    elif 'Specific Capacity(Ah)' in battery_df.columns or 'Specific_Capacity(Ah)' in battery_df.columns or 'Spec. Cap.(mAh/g)' in battery_df.columns:
         charge = battery_df[battery_df["Current(A)"] >= 0]
         discharge = battery_df[battery_df["Current(A)"] < 0]
         min_val = battery_df["Voltage(V)"].min()
