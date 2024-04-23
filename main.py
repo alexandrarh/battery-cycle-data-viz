@@ -8,7 +8,7 @@ import streamlit as st
 menu_items_page = {"Report a bug":"mailto:alexavndrarh@gmail.com","About":"This is version **1.0**"}
 st.set_page_config(page_title="Battery Cycle Data Visualizer", page_icon="🔋",menu_items=menu_items_page)
 
-# Random header stuff
+# Header stuff
 st.title("Battery cycle visualizer")
 st.write("""
 Welcome to the Battery cycle data generator web app! Generate your battery cycles easily here.
