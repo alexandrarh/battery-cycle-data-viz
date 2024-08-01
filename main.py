@@ -5,7 +5,7 @@ import random
 import streamlit as st
 
 # Config for page
-menu_items_page = {"Report a bug":"mailto:alexavndrarh@gmail.com","About":"This is version **1.0**"}
+menu_items_page = {"Report a bug":"mailto:alexavndrarh@gmail.com"}
 st.set_page_config(page_title="Battery Cycle Data Visualizer", page_icon="🔋",menu_items=menu_items_page)
 
 # Header stuff
