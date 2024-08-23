@@ -18,5 +18,5 @@ With the Battery Cycle Visualizer app, visualizing battery cycle data is easier 
 This web app was made by Alexandra Hernandez. If you have any questions/concerns, feel free to reach me at [alexavndrarh@gmail.com](mailto:alexavndrarh@gmail.com). </br>
 
 ### Other places to find me at
-[Website](https://alexavndra.github.io) </br> 
-[LinkedIn](https://linkedin.com/in/alexavndrarh)
+[Website](https://alexandrarh.com) </br> 
+[LinkedIn](https://linkedin.com/in/alexandrarh)
