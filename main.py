@@ -12,9 +12,9 @@ st.set_page_config(page_title="Battery Cycle Data Visualizer", page_icon="🔋",
 st.title("Battery cycle visualizer")
 st.write("""
 Welcome to the Battery cycle data generator web app! Generate your battery cycles easily here.
-**Compatible with Neware and Arbin-generated data files!**
+**Compatible with Neware and Agitrbin-generated data files!**
 
-Created by [Alexandra Hernandez](https://alexavndra.github.io) at UC San Diego.
+Created by [Alexandra Hernandez](https://alexandrarh.com) at UC San Diego.
 """)
 st.subheader("How to use the app")
 st.write("""
